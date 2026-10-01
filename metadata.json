@@ -1,0 +1,6 @@
+{
+  "name": "MediCare",
+  "description": "The most advanced hospital management system designed for modern healthcare. Connect patients, doctors, and administrators in one seamless platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

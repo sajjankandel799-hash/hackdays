@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Terminal as TerminalIcon, CornerDownLeft, Trash2, HelpCircle } from 'lucide-react';
+import { Terminal as TerminalIcon, CornerDownLeft, Trash2, HelpCircle, ArrowLeft } from 'lucide-react';
 import { Patient, Doctor, Appointment, MedicalRecord } from '../types/hospital';
 import { storage } from '../services/storage';
 
@@ -9,6 +9,7 @@ interface InteractiveCliProps {
   appointments: Appointment[];
   records: MedicalRecord[];
   onRefreshData: () => void;
+  onBack?: () => void;
 }
 
 interface LogEntry {
@@ -21,7 +22,8 @@ export const InteractiveCli: React.FC<InteractiveCliProps> = ({
   doctors,
   appointments,
   records,
-  onRefreshData
+  onRefreshData,
+  onBack
 }) => {
   const [inputVal, setInputVal] = useState('');
   const [history, setHistory] = useState<string[]>([]);
@@ -80,6 +82,15 @@ export const InteractiveCli: React.FC<InteractiveCliProps> = ({
       case 'clear':
         setLogs([]);
         return;
+
+      case 'exit':
+      case 'quit':
+        if (onBack) {
+          onBack();
+          return;
+        }
+        newLogs.push({ type: 'system', text: 'CLI session suspended. Use the top navigation or Back button to switch views.' });
+        break;
 
       case 'stats': {
         const inpatients = patients.filter(p => p.status === 'Inpatient' || p.status === 'Critical').length;
@@ -409,6 +420,15 @@ Clinical Notes    : ${rec.clinicalNotes}`
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg shadow-2xs transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-slate-500" />
+              <span>Back to Dashboard</span>
+            </button>
+          )}
           <button
             onClick={() => handleCommand('help')}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
